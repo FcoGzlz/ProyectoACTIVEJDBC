@@ -22,10 +22,18 @@ public class PatrocinadorController extends AppController{
     
    
     public void index(){
+        
+        if("json".equals(format())){
+            render().noLayout().contentType("application/json");
+        }
          
     List<Patrocinador> patrocinadores = Patrocinador.findAll();
     view("patrocinadores", patrocinadores);
     
+    }
+    
+    public void app() {
+        render().noLayout().contentType("text/html");
     }
     @POST
     public void addPatrocinador(){

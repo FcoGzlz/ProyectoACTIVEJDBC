@@ -8,6 +8,7 @@ package app.controllers;
 import app.models.Equipo;
 import app.models.Patrocinador;
 import java.util.List;
+import org.javalite.activejdbc.LazyList;
 import org.javalite.activeweb.AppController;
 import org.javalite.activeweb.annotations.DELETE;
 import org.javalite.activeweb.annotations.POST;
@@ -19,7 +20,9 @@ import org.javalite.activeweb.annotations.POST;
 public class EquipoController extends AppController{
     
     public void index(){
-        
+        if("json".equals(format())){
+            render().noLayout().contentType("application/json");
+        }
         List<Equipo> equipo = Equipo.findAll();
         view("equipos", equipo);
     

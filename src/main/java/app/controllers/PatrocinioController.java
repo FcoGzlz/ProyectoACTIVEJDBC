@@ -20,6 +20,10 @@ import org.javalite.activeweb.annotations.POST;
 public class PatrocinioController extends AppController {
 
     public void index() {
+        if("json".equals(format())){
+            render().noLayout().contentType("application/json");
+        }
+        
         List<Patrocinio> patrocinio = Patrocinio.findAll();
         view("patrocinio", patrocinio);
 
