@@ -1,6 +1,6 @@
 <h1>Ingrese Datos de Equipo</h1><hr>
 <br>
-<@form action="addEquipo" method="POST">
+<@form action="create" method="POST">
 Nombre: <input type="text" name="nombreEquipo">
 <span class="error">${(errores.nombreEquipo)!}</span>
 <br>

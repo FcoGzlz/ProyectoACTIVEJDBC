@@ -17,9 +17,6 @@ import org.javalite.activejdbc.annotations.Table;
 @Many2Many(other = Patrocinador.class, join = "patrocinio", sourceFKName = "idEquipo", targetFKName = "idPatrocinador")
 public class Equipo extends Model{
     
-    static{
-        validatePresenceOf("nombreEquipo").message("Debe ingresar un nombre");
-        validatePresenceOf("cantidadJugadores").message("Debe ingresar una cantidad");
-    }
+   
     
 }

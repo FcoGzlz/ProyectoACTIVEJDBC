@@ -7,70 +7,88 @@ package app.controllers;
 
 import app.models.Equipo;
 import app.models.Patrocinador;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activeweb.AppController;
 import org.javalite.activeweb.annotations.DELETE;
 import org.javalite.activeweb.annotations.POST;
+import org.javalite.activeweb.annotations.RESTful;
 
 /**
  *
  * @author Francisco
  */
+@RESTful
 public class EquipoController extends AppController{
     
+    private ObjectMapper mapper = new ObjectMapper();
     public void index(){
-        if("json".equals(format())){
-            render().noLayout().contentType("application/json");
-        }
-        List<Equipo> equipo = Equipo.findAll();
-        view("equipos", equipo);
-    
+        List<Equipo> equipos = Equipo.findAll();
+    view("equipos", equipos);
+    render().contentType("application/json");
     }
     
-    @POST
-    public void addEquipo(){
-        Equipo equipo = new Equipo();
-        equipo.fromMap(params1st());
-        view("equipos", equipo);
-        
-        if (equipo.save()) {
-            redirect(EquipoController.class);
-        }
-        else{
-            view("errores", equipo.errors());
-            render("formularioEquipo");
-        }
-    
+    public void create() throws IOException{
+        Map payload = mapper.readValue(getRequestString(), Map.class);
+        /*Equipo e = new Equipo();
+        e.fromMap(params1st());
+        e.save();*/
+        Equipo p = new Equipo();
+        p.fromMap(payload);
+        p.saveIt();
     }
     
-    @DELETE
-    public void eliminarEquipo(){
-        Equipo equipo = Equipo.findById(getId());
-        equipo.delete();
-        redirect(EquipoController.class);
-    
-    }
-    
-    public void patrocinadoresDeEquipo(){
-        
-        //System.out.println(Equipo.belongsTo(Patrocinador.class));
-        Equipo equipo = Equipo.findById(getId());
-        
-        List<Patrocinador> patrocinadoresDeEquipo = equipo.getAll(Patrocinador.class);
-        
-                if (patrocinadoresDeEquipo.size()!=0) {
-            view("patrocinadoresDeEquipo", patrocinadoresDeEquipo);
-            view("equipo", equipo);
-        }
-        else{
-            view("errores", "Este Patrocinador no Patrocina a ningún equipo Actualmente");
-            redirect(EquipoController.class);
+    public void update() throws IOException{
+    Map datos = mapper.readValue(getRequestString(), Map.class);
+    String id = getId();
+    Equipo e = Equipo.findById(id);
+        if (e == null) {
+            view("message", "La id de Equipo" + id + "no se ha encontrado", "code", 200);
+            render("message");
+            return;
+        } else {
+            e.fromMap(datos);
+            e.saveIt();
             
         }
     }
+        public void show(){
+        String id = getId();
+        Equipo e = Equipo.findById(id);
+            if (e == null) {
+                view("message", "La id de Equipo" + id + "no se ha encontrado", "code", 200);
+                render("message");
+                return;
+            } else {
+                view("equipo", e);
+                render("index");
+            }
+        }
+        
+        public void destroy(){
+        String id = getId();
+        Equipo e = Equipo.findById(id);
+            if (e == null) {
+                view("message", "La id de Equipo" + id + "no se ha encontrado", "code", 200);
+                render("message");
+                return;
+            }else{
+            e.delete();
+            }
+        }
+        
+        @Override
+        protected String getContentType(){
+            return "application/json";
+        }
+        
+        @Override
+        protected String getLayout(){
+            return null;
+        }
     
-    public void formularioEquipo(){
-    
-    }
+ 
 }
