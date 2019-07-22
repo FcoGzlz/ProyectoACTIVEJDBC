@@ -32,13 +32,21 @@ public class EquipoController extends AppController{
     }
     
     public void create() throws IOException{
-        Map payload = mapper.readValue(getRequestString(), Map.class);
+        Map datos = mapper.readValue(getRequestString(), Map.class);
         /*Equipo e = new Equipo();
         e.fromMap(params1st());
         e.save();*/
-        Equipo p = new Equipo();
-        p.fromMap(payload);
-        p.saveIt();
+        if (datos.isEmpty()) {
+            view("message", "Debe ingresar todos los campos", "code", 200);
+            render("message");
+        } else {
+            Equipo e = new Equipo();
+            e.fromMap(datos);
+            e.saveIt();
+            view("message", "El equipo"+" "+"''"+e.getString("nombreEquipo").toUpperCase()+"''"+" "+"ha sido agregado", "code", 200);
+            render("message");
+        }
+     
     }
     
     public void update() throws IOException{
@@ -71,13 +79,14 @@ public class EquipoController extends AppController{
         public void destroy(){
         String id = getId();
         Equipo e = Equipo.findById(id);
+        
             if (e == null) {
-                view("message", "La id de Equipo" + id + "no se ha encontrado", "code", 200);
+                view("message", "La ID ingresada no se ha encontrado", "code", 200);
                 render("message");
-                return;
             }else{
+            view("message", "El equipo" + " " +"''"+e.get("nombreEquipo").toString().toUpperCase()+"''"+ " "+"se ha eliminado" , "code", 200);
             e.delete();
-            }
+            render("message");}
         }
         
         @Override
